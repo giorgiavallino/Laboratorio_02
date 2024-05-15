@@ -11,7 +11,6 @@ class Translator:
         pass
 
     def loadDictionary(self, dict):
-        # dict is a string with the filename of the dictionary
         pass
 
     def handleAdd(self, entry):
