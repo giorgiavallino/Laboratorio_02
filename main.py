@@ -23,20 +23,21 @@ while(True):
 
     # Introdurre un insieme di condizioni if mediante le quali è possibile svolgere le rispettive funzionalità
 
-    # Se il numero inserito corrisponde a caratteri alfabetici, allora il porgramma viene bloccato poiché quanto
+    # Se il numero inserito corrisponde a caratteri alfabetici, allora il programma viene bloccato poiché quanto
     # inserito dall'utente non rispecchia quanto richiesto dal codice stesso... il codice continuerà a stampare il menù
     # iniziale tramite il metoodo printMenu e continuerà a chiedere l'inserimento di un input numerico fino a che
     # l'utente non inserirà il valore corretto per il giusto funzionamento del programma
     if numero.isnumeric() == False:
         while numero.isnumeric() == False:
             t.printMenu()
-            print(ValueError(f'Non è stato inserito un numero, ma sono state inserite delle lettere... riprovare ricaricando il programma!'))
+            print(ValueError(f'Non è stato inserito un numero, ma sono state inserite delle lettere... riprovare!'))
             numero = input("Inserisci il numero dell'operazione che vuoi svolgere: ")
+
 
     # Se il numero inserito dall'utente è maggiore di 5 o minore di 1, allora il valore immesso non corrisponde a
     # nessuna funzione e, quindi, bisognerà fornire un nuovo numero al quale viene associata un'operazione
     if int(numero) > 5 and int(numero) < 1:
-        print("Il numero inserito non è adatto allo svolgimento del programma")
+        print(ValueError("Il numero inserito non è adatto allo svolgimento del programma"))
 
 
     # Se il numero inserito dall'utente è uno, allora la funzione richiesta è "Aggiungi una parola"
@@ -57,7 +58,11 @@ while(True):
 
     # Se il numero inserito dall'utente è tre, allora la funzione richiesta è "Cerca con wildcard"
     if int(numero) == 3:
-        pass
+        # Richiedere la wildcard in lingua aliena da tradurre
+        da_tradurre_con_wildcard = input("Inserisci la parola aliena da tradurre con wildcard: ")
+        # Trovare la parola aliena corrispondente alla wildcard e la sua relativa traduzione in lingua umana
+        # attraverso il metodo handleWildCard
+        t.handleWildCard(da_tradurre_con_wildcard)
 
 
     # Se il numero inserito dall'utente è quattro, allora la funzione richiesta è "Stampa tutto il dizionario"
@@ -71,9 +76,3 @@ while(True):
     # Python mediante il relativo comando break
     if int(numero) == 5:
         break
-
-    if int(numero) > 6 or int(numero) < 1:
-        print("Il numero inserito non è adatto allo svolgimento del programma")
-
-    if numero.isalpha() == True:
-        print(ValueError(f'Non è stato inserito un numero, ma sono state inserite delle lettere... riprovare!'))

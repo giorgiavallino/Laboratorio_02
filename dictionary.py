@@ -1,3 +1,7 @@
+# Importare la libreria re di cui si utilizzerà la funzione search
+
+import re
+
 # Definire la classe Dictionary
 
 class Dictionary:
@@ -32,7 +36,9 @@ class Dictionary:
                 # prima parola di ogni riga, ossia la parola aliena, la chiave del dizionario e con la seconda parola
                 # di ogni riga, ossia la parola umana, il valore della chiave prima usata
                 if len(parole) == 2:
-                    self.dizionario[parole[0]] = parole[1]
+                    chiave = parole[0].lower()
+                    valore = parole[1].lower()
+                    self.dizionario[chiave] = valore
 
 
     # Definire un metodo addWord che aggiunge la parola aliena e la sua relativa traduzione in lingua umana aggiornando,
@@ -47,16 +53,28 @@ class Dictionary:
             # Dividere la stringa parole_da_aggiungere usando split() ed eliminando eventuali spazi iniziali e finali della
             # medesima stringa
             parole = parole_da_aggiungere.strip().split()
+            # Affinché la ricerca sia case insensitive, conviene richiedere che la prima parola della lista parole
+            # (ossia la parola aliena da aggiungere) sia minuscola come tutte le parole che si trovano nel
+            # self.dizionario
+            parola_aliena_minuscola = parole[0].lower()
             # Se la lunghezza delle parole è due, allora è possibile aggiungere la parola aliena e la sua traduzione:
             # aggiornare, quindi, il dizionario dell'oggetto indicando con la prima parola, ossia la parola la chiave del
             # dizionario e con la seconda parola, ossia la parola umana, il valore della chiave prima usata
             if len(parole) == 2:
-                self.dizionario[parole[0]] = parole[1]
-                # Aggiunta la parola, si può successivamente anche aggiornare il file dictionary.txt aggiungendo la parola
-                # aliena e la sua relativa traduzione semplicemente vedendoli non come elementi di un dizionario Python, ma
-                # come elementi di una lista
-                with open("dictionary.txt", "a") as file:
-                    file.write(f'\n{parole[0]} {parole[1]}')
+                # Se la parola aliena minuscola non si trova già all'interno del dizionario, allora non siamo nel caso
+                # delle traduzioni multiple
+                if parola_aliena_minuscola not in self.dizionario:
+                    self.dizionario[parole[0]] = parole[1]
+                    # Aggiunta la parola, si può successivamente anche aggiornare il file dictionary.txt aggiungendo la
+                    # parola aliena e la sua relativa traduzione attraverso la funzione write()
+                    with open("dictionary.txt", "a") as file:
+                        file.write(f'\n{parole[0]} {parole[1]}')
+                # Se la parola aliena si trova già all'interno del dizionario, allora siamo nel caso delle
+                # traduzioni multiple
+
+                # DA FARE !!!
+
+        # Se la parola inserita non è costituita solo da caratteri alfabetici, allora stampa l'errore
         else:
             print(ValueError(f'La parola inserita non è valida!'))
 
@@ -67,14 +85,48 @@ class Dictionary:
         # Se la parola aliena che bisogna tradurre è presente all'interno del dizionario, allora ne verrà stampata la
         # traduzione, altrimenti verrà stampato il seguente messaggio "La parola aliena cercata non esiste oppure non
         # è stata trovata la sua traduzione in lingua umana"
-        if parola_aliena_da_tradurre in self.dizionario:
-            print(self.dizionario[parola_aliena_da_tradurre])
+        # Si ricorda, inoltre, che bisogna rendere case insensitive la ricerca della traduzione... la parola aliena da
+        # tradurre dovrà quindi essere minuscola come tutte le parole del self.dizionario
+        parola_aliena_da_tradurre_minuscola = parola_aliena_da_tradurre.lower()
+        if parola_aliena_da_tradurre_minuscola in self.dizionario:
+            print(f'Parola aliena: {parola_aliena_da_tradurre}, traduzione: {self.dizionario[parola_aliena_da_tradurre_minuscola]}')
         else:
             print("La parola aliena cercata non esiste oppure non è stata trovata la sua traduzione in lingua umana")
 
-    #
-    def translateWordWildCard(self):
-        pass
+
+    # Definire un metodo translateWordWildCard il quale data una parola aliena contenente un punto di domanda al suo
+    # interno al posto di un carattere, ne restituisca la traduzione in lingua umana andando a sostituire alla
+    # parola aliena ogni carattere per trovarne il corrispettivo esistente
+    def translateWordWildCard(self, wildcard):
+        # Se c'è più di un punto interrogativo, allora la parola inserita dall'utente non è valida
+        if wildcard.count("?") > 1:
+            print(ValueError("L'input inserito non è valido... la wildcard deve contenere soltanto un carattere speciale '?'"))
+        # Se il punto interrogativo è solo uno, allora si può procedere con l'esecuzione del codice
+        elif wildcard.count("?") == 1:
+            # Per utilizzare la funzione search della libreria re bisogna sostituire il punto di domanda presente nella
+            # parola aliena inserita dall'utente con un semplice punto
+            wildcard_puntata = wildcard.replace("?", ".")
+            # Essendo le parole contenute nel self.dizionario tutte minuscole, bisogna richiedere che anche la wildcard
+            # lo sia
+            wildcard_puntata_minuscola = wildcard_puntata.lower()
+            # Per ogni chiave del dizionario, richiedere la condizione di ricerca della traduzione della parola aliena
+            for chiave in self.dizionario.keys():
+                # Definire una lista vuota chiamata traduzioni
+                traduzioni = []
+                # La funzione search della libreria re cambia il punto in ogni carattere alfabetico possibile e ricerca
+                # il suo corrispotivo per ogni chiave del dizionario
+                if re.search(wildcard_puntata_minuscola, chiave):
+                    # Inizializzare la variabile traduzione che rappresenta il valore della chiave del dizionario
+                    traduzione = self.dizionario.get(chiave)
+                    # Aggiungere tale traduzione all'interno della lista traduzioni
+                    traduzioni.append(traduzione)
+                # Se la lista traduzioni è diversa dalla lista vuota, allora il programma riscrive la lista come
+                # una stringa (ossia senza parentesi quadre e virgolette) e ne stampa la relativa traduzione
+                # tramite l'apposita print in cui vengono stampate anche la wildcard e la parola aliena rispettiva
+                if traduzioni != []:
+                    traduzioni_stringa = " ".join(traduzioni)
+                    print(f'Data la parola aliena tramite wildcard {wildcard}, la parola aliena trovata è {chiave} e la corrispettiva traduzione in lingua italiana è {traduzioni_stringa}')
+
 
     # Definire un metodo print_dictionary che stampa tutto il dizionario contenuto nel file dictionary.txt
     def print_dictionary(self):

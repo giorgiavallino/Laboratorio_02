@@ -57,10 +57,12 @@ class Translator:
         return self.dizionario.translate(query)
 
 
-    #
+    # Definire il metodohandleWildCard che permette data la wildcard di stampare la parola aliena e la sua relativa
+    # traduzione in lingua umana tramite il metodo translateWordWildCard introdotto e inizializzato all'interno della
+    # classe Dictionary()
     def handleWildCard(self,query):
         # query is a string with a ? --> <par?la_aliena>
-        pass
+        return self.dizionario.translateWordWildCard(query)
 
 
     # Definire un metodo printDictionary che stampa tutto il contenuto del file dictionary.txt tramite il metodo
